@@ -49,8 +49,8 @@ app.controller("HomeController", function($scope, $location) {
 app.controller("SearchController", function($scope, $location, $http) {
 
   var query = window.window.localStorage.searchquery;
-  var url = '/search-spiegel/ki-test/Frontend/api/Searcher.py';
-  var requestData = {foo: 'bar'};
+  var url = '/search-spiegel/Backend/Controller.py';
+  var requestData = {'searchquery': query};
 
   var transform = function(data){
         return $.param(data);
@@ -60,8 +60,8 @@ app.controller("SearchController", function($scope, $location, $http) {
     url , 
     requestData, 
     {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-        transformRequest: transform
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        //,transformRequest: transform
     })
     .success(function(responseData) {
         $scope.searchresponse = responseData;

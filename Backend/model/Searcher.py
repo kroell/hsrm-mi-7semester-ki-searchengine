@@ -16,5 +16,5 @@ class Searcher(object):
         scoredocs = self.searcher.search(query, 50).scoreDocs
         for i, scoredoc in enumerate(scoredocs):
             d = self.searcher.doc(scoredoc.doc)            
-            print unicode(d.getField("url"))
+            return unicode(d.getField("url"))
     
