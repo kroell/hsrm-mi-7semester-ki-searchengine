@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="UTF-8">
+  <title>SearchSpiegel</title>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://code.jquery.com/jquery.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <script src="vendor/js/angular.js"></script>
+   
+    <script type="text/javascript" src="app/js/app.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+
+</head>
+
+<body>
+<div class="container">
+
+      <div class="page-header text-center">
+            <h1>Durchsuche Spiegel.de</h1>
+            <p class="lead">Alles was du schon immer auf Spiegel.de finden wolltest, findest du hier.</p>
+      </div>
+      
+      <div id="view" ng-view></div>
+
+    
+  </div>
+</body>
+</html>
