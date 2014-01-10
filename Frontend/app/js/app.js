@@ -49,7 +49,7 @@ app.controller("HomeController", function($scope, $location) {
 app.controller("SearchController", function($scope, $location, $http) {
 
   var query = window.window.localStorage.searchquery;
-  var url = '/search-spiegel/Frontend/api/Searcher.py';
+  var url = '/search-spiegel/ki-test/Frontend/api/Searcher.py';
   var requestData = {foo: 'bar'};
 
   var transform = function(data){
