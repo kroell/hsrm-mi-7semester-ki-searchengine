@@ -13,15 +13,13 @@ import nltk
 from bs4 import BeautifulSoup
 import lucene
 
-import thread
-
 
 
 URL = 'http://www.spiegel.de/'
 SEARCHDEPTH = 1;
 DIR = './index-data'
 
-# PAGE MODEL
+#PAGE
 ##################################
 
 class Page(object):
@@ -42,7 +40,7 @@ class Page(object):
 
 
 
-#SPIDER MODEL
+#SPIDER
 ##################################
 
 class Spider(object):
@@ -199,7 +197,6 @@ class Searcher(object):
         scoredocs = self.searcher.search(query, 50).scoreDocs
         MAX = 1000
         hits = self.searcher.search(query, MAX)
-        #print 
         temp = '<p class="lead">Insgesamt wurden ' + str(hits.totalHits) + ' Dokument(e) für die Suchanfrage "' + str(query) + '" gefunden.</p>'
 
         for hit in scoredocs:
@@ -211,9 +208,7 @@ class Searcher(object):
 
 
 
-
-
-#SEARCH ENGINE MODEL
+#SEARCH ENGINE
 ##################################
 
 class SearchEngine(object):

@@ -5,10 +5,6 @@ import thread
 import cherrypy
 import SearchEngine as engine
 
-import cherrypy.process.plugins
-
-import BackgroundTaskQueue
-
 
 URL = 'http://www.spiegel.de/'
 searchEngine = engine.SearchEngine(URL)
