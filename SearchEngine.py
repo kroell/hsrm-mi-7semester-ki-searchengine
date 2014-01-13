@@ -2,28 +2,24 @@
 # -*- coding: utf-8 -*-
 
 '''
-Created on 06.12.2013
-@author: soerenkroell
+Search Engine
 '''
 
-# from model import Page
 import sys
-import json
-import cgi
 import urllib2
 import time
 import socket
 import nltk
 from bs4 import BeautifulSoup
 import lucene
-import jcc
-#from lucene import SimpleFSDirectory, System, File, Document, Field, StandardAnalyzer, IndexWriter, Version
- 
+
+import thread
+
 
 
 URL = 'http://www.spiegel.de/'
 SEARCHDEPTH = 1;
-
+DIR = './index-data'
 
 # PAGE MODEL
 ##################################
@@ -43,7 +39,6 @@ class Page(object):
         self.description = description
         self.created = created
         self.modified = modified 
-
 
 
 
@@ -90,42 +85,52 @@ class Spider(object):
         self.pages[docurl]= page
 
         for link in soup.find_all('a'):
-            if len(self.pages) >= 7 :
-                return
+            #if len(self.pages) >= 20 :
+             #   return
             url = str(link.get('href'))
             try:
                 if url.startswith('/') or url.startswith(self.start_url):
                     if url.startswith('/'):
                         url = self.start_url + url[1:]
-                        #print "URL-", url
-                    url = url.rstrip('/') # '/' am ende entfernen
+                    if not url.endswith('/'):
+                        url = url.rstrip('/') # '/' am ende entfernen
                     if not self.pages.has_key(url):
                         print url
                         time.sleep(0.2) 
                         self.initSpider(url)
             except Exception, error:
-                print "Error: %r" % error
-        
+                print "The Spider has done something boring: %r" % error
+    
     
     def preparePage(self):
-        print len(self.pages)
+        #print len(self.pages)
         for page in self.pages.values():
             page.raw = nltk.clean_html(page.html)
             '''Wird Lucene schon machen'''
             #page.tokens = nltk.word_tokenize(page.raw)
   
+
+    def getIndexedPages(self):
+        temp = "<ul>"
+        for value in self.pages:
+            print value
+            temp += '<li><a href="'+ value +'" title="' + value + '">' + value + '</a></li>'
+
+        temp += '</ul>'
+        return temp
         
 
-#INDEXER MODEL
+#WRITER
 ##################################
 
-class Indexer(object):
+class Writer(object):
     
     def __init__(self):
         lucene.initVM()
         self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
-        self.store = lucene.SimpleFSDirectory(lucene.File('./data/'))
+        self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
         self.writer = lucene.IndexWriter(self.store, self.analyzer, True, lucene.IndexWriter.MaxFieldLength(512))
+        print "Currently there are %d documents in the index..." % self.writer.numDocs()
         
     def addPage(self, page):
         doc = lucene.Document()
@@ -144,16 +149,49 @@ class Indexer(object):
         self.writer.close()
         self.writer = None
 
+    
 
+
+#READER
+##################################
+class Reader(object):
+
+    def __init__(self):
+        lucene.initVM()
+        self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
+        self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
+        self.reader = lucene.IndexReader.open(self.store, True)
+
+    def getIndexedPages(self):
+        terms = self.reader.terms(lucene.Term("url", ""))
+        facets = {'other': 0}
+        temp = "<ul>"
+        while terms.next():
+            if terms.term().field() != "url": 
+                break
+            #print "Field Name:", terms.term().field()
+            #print "Field Value:", terms.term().text()
+            #print "Matching Docs:", int(self.reader.docFreq(terms.term()))
+            temp += '<li><a href="'+ terms.term().text().encode("utf-8") +'" title="' + terms.term().text().encode("utf-8") + '">' + terms.term().text().encode("utf-8") + '</a></li>'
+
+        temp += '</ul>'
+        return temp
+
+
+
+#SEARCHER
+##################################
 class Searcher(object):
 
-    def __init__(self, indexer):
+    def __init__(self):
+        lucene.initVM()
+        self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
+        self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
         self.parser = lucene.MultiFieldQueryParser(
             lucene.Version.LUCENE_CURRENT,
             ["content"],
-            indexer.analyzer)
-        self.searcher = lucene.IndexSearcher(indexer.store, readOnly=True)
-        self.indexer = indexer
+            self.analyzer)
+        self.searcher = lucene.IndexSearcher(self.store, readOnly=True)
 
 
     def search(self, queryString):
@@ -170,47 +208,60 @@ class Searcher(object):
             temp += '<div style="margin-bottom:30px;"><ul class="list-unstyled"><li><h5><a href="' + doc.get("url").encode("utf-8") + '" target="_blank">'+ doc.get("title").encode("utf-8") +'</a></h5> </li><li><a href="'+ doc.get("url").encode("utf-8") +'">'+doc.get("url").encode("utf-8")+' </a></li><li>' + doc.get("description").encode("utf-8") +'</li><li> Score: '+ str(hit.score)+'</li></ul></div>'
  
         return temp
-        #return temp
-        #for i, scoredoc in enumerate(scoredocs):
-         #   d = self.searcher.doc(scoredoc.doc)   
-            #print unicode(d.getField("title")) + unicode(d.getField("url")) 
-          #  print "Found %d document(s) that matched query '%s' with score %d:" % (hits.totalHits, query, i)  
-            #return "Found %d document(s) that matched query '%s' with score %f:" % (hits.totalHits, query, i)        
-            #return unicode(d.getField("title"))
-    
-
-
-# print "Content-Type: text/html;charset=utf-8\n"
-
-# spider = Spider(URL)
-
-# print "start crawling...\n"
-
-# spider.initSpider(URL)
-
-# print "\n...finished crawling\n"
-
-# spider.preparePage()
-
-# indexer = Indexer()
-
-# print "indexing pages"
-    
-# [indexer.addPage(p) for p in spider.pages.values()] 
-# indexer.close()
-
-# searcher = Searcher(indexer)
-# eingabe = "";
 
 
 
-# # request = cgi.FieldStorage()
-# # searchRequest = request["searchquery"].value
-# # print searchRequest
 
-# print searcher.search("europa")
 
-   
+#SEARCH ENGINE MODEL
+##################################
+
+class SearchEngine(object):
+
+    def __init__(self, URL=None):
+        self.url = URL
+        self.spider = None
+        self.writer = None
+        self.searcher = None
+
+    def startSpider(self, URL=None):
+        spider = Spider(URL)
+        spider.initSpider(URL)
+        spider.preparePage()
+        self.spider = spider
+
+    def startWriter (self):
+        writer = Writer()    
+        [writer.addPage(p) for p in self.spider.pages.values()]
+        writer.close()
+        self.writer = writer
+
+    def startSpiderAndIndex(self, threadName=None, URL=None):
+        print "The Spider is on her way!"
+        self.startSpider(self.url)
+        print "Now just indexing da things"
+        self.startWriter()
+        print "And we are done!"
+        
+
+    def startSearch (self, query):
+        searcher = Searcher()
+        self.searcher = searcher
+        return searcher.search(query)
+
+    def getSpider(self):
+        return self.spider
+
+    def getWriter(self):
+        return self.writer
+
+    def getSearcher(self):
+        return self.searcher
+
+    def getIndexedPages(self):
+        reader = Reader()
+        return reader.getIndexedPages()
+
 
 
     
