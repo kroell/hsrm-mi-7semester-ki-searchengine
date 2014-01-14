@@ -18,9 +18,10 @@ https://gist.github.com/peplin/728598
 ANT installieren  
 http://superuser.com/questions/610157/how-do-i-install-ant-on-os-x-mavericks
   
+<br/>
 
 
-Zum Start des Webservers python Controller.py ausführen. Dieser läuft dann unter localhost:8080. Im Pfad localhost:8080/start/ können Suchanfragen gestellt werden.
+Zum Start des Webservers <b>python WebServer.py</b> ausführen. Dieser läuft dann unter localhost:8080. Im Pfad localhost:8080/start/ können Suchanfragen gestellt werden.
 
 
 Ansicht der Suchresultate  
