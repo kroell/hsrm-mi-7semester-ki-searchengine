@@ -75,7 +75,7 @@ class StartPage(object):
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container" style="padding: 0 0 80px 0;">
       <div class="page-header text-center">
             <h1>Durchsuche Spiegel.de</h1>
             <p class="lead">Alles was du schon immer auf Spiegel.de finden wolltest, findest du <a href="/start/">hier</a>.</p>
@@ -108,6 +108,7 @@ class StartPage(object):
       $('#submit').click(function (){
           $('#loader').show();
         });
+      
     });
   </script>
 
@@ -219,7 +220,7 @@ class ShowIndexedPages(object):
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="padding: 0 0 80px 0;">
       <div class="page-header text-center">
             <h1>Alle indizierten Seiten</h1>
             <p class="lead">Alles was du schon immer auf Spiegel.de finden wolltest, findest du <a href="/start/">hier</a>.</p>

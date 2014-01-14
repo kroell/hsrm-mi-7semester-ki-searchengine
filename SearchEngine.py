@@ -113,7 +113,7 @@ class Spider(object):
         # For all founded Hyperlinks, standardize them, so they look all the same
         # If the spider founds a new url, it calls his self recursivly.
         for link in soup.find_all('a'):
-            if len(self.pages) >= 40 :
+            if len(self.pages) >= 1500 :
                 return
             url = str(link.get('href'))
             try:
@@ -153,7 +153,7 @@ class Writer(object):
         '''
         vm_env = lucene.getVMEnv() # get lucene.vm
         vm_env.attachCurrentThread()
-        self.analyzer = lucene.GermanAnalyzer(lucene.Version.LUCENE_CURRENT)
+        self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
         self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
         self.writer = lucene.IndexWriter(self.store, self.analyzer, True, lucene.IndexWriter.MaxFieldLength(512))
         
@@ -201,6 +201,7 @@ class Reader(object):
         '''
         vm_env = lucene.getVMEnv() # get lucene.vm
         vm_env.attachCurrentThread()
+        self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
         self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
         self.reader = lucene.IndexReader.open(self.store, True)
 
@@ -209,19 +210,20 @@ class Reader(object):
         Returns a HTML formatted DIV with the number of already indexed files and UL with LI elements, which contains 
         the item url.
         '''
+        #print self.analyzer.tokenStream('url', lucene.StringReader(doc))
         terms = self.reader.terms(lucene.Term("url", ""))
         facets = {'other': 0}
         temp = "<div><p class='lead'>Derzeit sind "+ str(self.reader.numDocs()) +" Dokumente indexiert.</p></div>" 
-        temp += "<ul>"
+        temp += "<div>"
         while terms.next():
             if terms.term().field() != "url": 
                 break
             #print "Field Name:", terms.term().field()
             #print "Field Value:", terms.term().text()
             #print "Matching Docs:", int(self.reader.docFreq(terms.term()))
-            temp += '<li><a href="'+ terms.term().text().encode("utf-8") +'" title="' + terms.term().text().encode("utf-8") + '">' + terms.term().text().encode("utf-8") + '</a></li>'
+            temp += '<ul class="list-unstyled"><li><a href="'+ terms.term().text().encode("utf-8") +'" title="' + terms.term().text().encode("utf-8") + '">' + terms.term().text().encode("utf-8") + '</a></li></ul>'
 
-        temp += '</ul>'
+        temp += '</div>'
         return temp
 
 
@@ -239,7 +241,7 @@ class Searcher(object):
         '''
         vm_env = lucene.getVMEnv()
         vm_env.attachCurrentThread()
-        self.analyzer = lucene.GermanAnalyzer(lucene.Version.LUCENE_CURRENT)
+        self.analyzer = lucene.StandardAnalyzer(lucene.Version.LUCENE_CURRENT)
         self.store = lucene.SimpleFSDirectory(lucene.File(DIR))
         self.parser = lucene.MultiFieldQueryParser(
             lucene.Version.LUCENE_CURRENT,
@@ -261,7 +263,10 @@ class Searcher(object):
         for hit in scoredocs:
             #print hit.score, hit.doc, hit.toString()
             doc = self.searcher.doc(hit.doc)
-            temp += '<div style="margin-bottom:30px;"><ul class="list-unstyled"><li><h5><a href="' + doc.get("url").encode("utf-8") + '" target="_blank">'+ doc.get("title").encode("utf-8") +'</a></h5> </li><li><a href="'+ doc.get("url").encode("utf-8") +'">'+doc.get("url").encode("utf-8")+' </a></li><li>' + doc.get("description").encode("utf-8") +'</li><li> Score: <b>'+ str(hit.score)+'</b></li></ul></div>'
+            if (doc.get("description")):
+                temp += '<div style="margin-bottom:30px;"><ul class="list-unstyled"><li><h5><a href="' + doc.get("url").encode("utf-8") + '" target="_blank">'+ doc.get("title").encode("utf-8") +'</a></h5> </li><li><a href="'+ doc.get("url").encode("utf-8") +'">'+doc.get("url").encode("utf-8")+' </a></li><li>' + doc.get("description").encode("utf-8") +'</li><li> Score: <b>'+ str(hit.score)+'</b></li></ul></div>'
+            else:
+                temp += '<div style="margin-bottom:30px;"><ul class="list-unstyled"><li><h5><a href="' + doc.get("url").encode("utf-8") + '" target="_blank">'+ doc.get("title").encode("utf-8") +'</a></h5> </li><li><a href="'+ doc.get("url").encode("utf-8") +'">'+doc.get("url").encode("utf-8")+' </a></li><li>Keine Beschreibung vorhanden</li><li> Score: <b>'+ str(hit.score)+'</b></li></ul></div>'
         return temp
 
 
