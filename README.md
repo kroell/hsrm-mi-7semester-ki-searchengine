@@ -25,7 +25,7 @@ Zum Start des Webservers <b>python WebServer.py</b> ausführen. Dieser läuft da
 <br/>
 
 <b>Ansicht der Suchresultate</b>
-<img src="http://www.idseven.info/github/screenshot1.png"> </img>
+<img src="http://www.idseven.info/github/search-spiegel-search.png"> </img>
 
 <br/>
 
