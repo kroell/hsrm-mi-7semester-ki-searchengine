@@ -25,9 +25,9 @@ Zum Start des Webservers <b>python WebServer.py</b> ausführen. Dieser läuft da
 <br/>
 
 <b>Ansicht der Suchresultate</b>
-<img src="http://www.idseven.info/github/search-spiegel-search.png"> </img>
+<img src="http://www.idseven.info/github/search-spiegel-result.png"> </img>
 
 <br/>
 
 <b>Ansicht der indexierten Seiten</b>
-<img src="http://www.idseven.info/github/screenshot2.png"> </img>
+<img src="http://www.idseven.info/github/search-spiegel-index.png"> </img>
