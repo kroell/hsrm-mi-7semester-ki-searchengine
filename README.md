@@ -20,12 +20,14 @@ http://superuser.com/questions/610157/how-do-i-install-ant-on-os-x-mavericks
   
 <br/>
 
-
 Zum Start des Webservers <b>python WebServer.py</b> ausführen. Dieser läuft dann unter localhost:8080. Im Pfad localhost:8080/start/ können Suchanfragen gestellt werden.
 
+<br/>
 
-Ansicht der Suchresultate  
+<b>Ansicht der Suchresultate</b>
 <img src="http://www.idseven.info/github/screenshot1.png"> </img>
 
-Ansicht der indexierten Seiten
+<br/>
+
+<b>Ansicht der indexierten Seiten</b>
 <img src="http://www.idseven.info/github/screenshot2.png"> </img>
