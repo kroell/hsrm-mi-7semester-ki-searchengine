@@ -24,7 +24,7 @@ Zum Start des Webservers python Controller.py ausführen. Dieser läuft dann unt
 
 
 Ansicht der Suchresultate  
-<img src="http://www.idseven.info/github/screenshot.png"> </img>
+<img src="http://www.idseven.info/github/screenshot1.png"> </img>
 
 Ansicht der indexierten Seiten
 <img src="http://www.idseven.info/github/screenshot2.png"> </img>
